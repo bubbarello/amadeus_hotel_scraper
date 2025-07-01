@@ -1,0 +1,26 @@
+# Bytecode
+__pycache__/
+*.py[cod]
+
+# Config privati
+conf_local/
+*.ini~
+*.log
+
+# Ambienti virtuali
+.venv/
+venv/
+env/
+pyenv.cfg
+
+# Cache
+cachedir.tag
+*.cache
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
