@@ -9,7 +9,6 @@ class TokenGetter(object):
         self.token_url = self.config.get("Token", "token_url")
         self.api_key = self.config.get('API', 'api_key')
         self.api_secret = self.config.get('API', 'api_secret')
-
         self.body = {
             "client_id": self.api_key,
             "client_secret": self.api_secret,
@@ -17,6 +16,11 @@ class TokenGetter(object):
         }
 
     def get_token(self):
+        """
+        Main method to get a token, checks if there's a valid token inside the config file
+        otherwise generates a new one
+        :return: The access token
+        """
         token = self.config.get("Token", "token", fallback=None)
         response_parser = lib.response_parser.ResponseParser()
 
@@ -32,6 +36,10 @@ class TokenGetter(object):
             return self.generate_token()
 
     def generate_token(self):
+        """
+        Method to generate a new token and save it inside the local config file
+        :return: The access token
+        """
         # Genera token
         token_request = requests.post(self.token_url, headers=self.headers, data=self.body)
         token_json = lib.response_parser.ResponseParser.parser(token_request)
@@ -40,12 +48,7 @@ class TokenGetter(object):
         if not access_token:
             raise Exception("Token non presente nella response")
 
-        # Aggiorna il file ini
-        if not self.config.has_section('Token'):
-            self.config.add_section('Token')
-        self.config.set('Token', 'token', access_token)
-
-        with open(self.config_path, 'w') as configfile:
-            self.config.write(configfile)
+        # Aggiorna il file conf_local con il token nuovo
+        lib.config_loader.write_to_private_config('Token', 'token', access_token)
 
         return access_token
